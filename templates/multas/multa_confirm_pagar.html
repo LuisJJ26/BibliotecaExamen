@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block title %}Pagar Multa{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card border-success shadow-lg">
+            <div class="card-header bg-success text-white rounded-top-4">
+                <h3 class="mb-0 fs-4"><i class="fas fa-money-bill-wave me-2"></i> Confirmar pago de multa</h3>
+            </div>
+            <div class="card-body p-4">
+                <div class="mb-3">
+                    <p><strong><i class="fas fa-user me-2"></i>Usuario:</strong> {{ object.usuario.username }}</p>
+                    <p><strong><i class="fas fa-dollar-sign me-2"></i>Monto:</strong> <span class="text-success fw-bold">${{ object.monto }}</span></p>
+                    <p><strong><i class="fas fa-calendar-alt me-2"></i>Fecha de multa:</strong> {{ object.fecha_multa|date:"d/m/Y" }}</p>
+                </div>
+                <p class="alert alert-warning"><i class="fas fa-exclamation-triangle me-2"></i> ¿Registrar esta multa como pagada?</p>
+                <form method="post" class="mt-3">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-success rounded-pill px-4 me-2"><i class="fas fa-check-circle me-2"></i> Sí, marcar pagada</button>
+                    <a href="{% url 'multas:list' %}" class="btn btn-secondary rounded-pill px-4"><i class="fas fa-ban me-2"></i> Cancelar</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

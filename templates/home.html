@@ -1,0 +1,359 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Inicio | Biblioteca BICU{% endblock %}
+
+{% block content %}
+{% if user.is_authenticated %}
+    <!-- ========== PANEL DE CONTROL MEJORADO ========== -->
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap">
+        <h1 class="fw-bold serif-heading">
+            <i class="fas fa-tachometer-alt gold-accent me-2"></i> Panel de Control
+        </h1>
+        <p class="text-muted mb-0">
+            <i class="fas fa-calendar-alt me-1"></i> {% now "l, j \d\e F \d\e Y" %}
+        </p>
+    </div>
+
+    <!-- Tarjetas de métricas principales (todas con diseño uniforme y elegante) -->
+    <div class="row g-4 mb-5">
+        {% if user.rol == 'administrador' %}
+            <!-- ADMIN: más métricas -->
+            <div class="col-md-3">
+                <div class="card h-100 border-0 shadow-sm text-center">
+                    <div class="card-body">
+                        <i class="fas fa-book-open fa-2x gold-accent mb-2"></i>
+                        <h6 class="text-uppercase text-muted small">Total Libros</h6>
+                        <p class="display-5 fw-bold mb-0 serif-heading">{{ total_libros|default:"0" }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card h-100 border-0 shadow-sm text-center">
+                    <div class="card-body">
+                        <i class="fas fa-barcode fa-2x gold-accent mb-2"></i>
+                        <h6 class="text-uppercase text-muted small">Ejemplares</h6>
+                        <p class="display-5 fw-bold mb-0 serif-heading">{{ total_ejemplares|default:"0" }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card h-100 border-0 shadow-sm text-center">
+                    <div class="card-body">
+                        <i class="fas fa-users fa-2x gold-accent mb-2"></i>
+                        <h6 class="text-uppercase text-muted small">Usuarios registrados</h6>
+                        <p class="display-5 fw-bold mb-0 serif-heading">{{ total_usuarios|default:"0" }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card h-100 border-0 shadow-sm text-center">
+                    <div class="card-body">
+                        <i class="fas fa-hand-holding-heart fa-2x gold-accent mb-2"></i>
+                        <h6 class="text-uppercase text-muted small">Préstamos activos</h6>
+                        <p class="display-5 fw-bold mb-0 serif-heading">{{ prestamos_activos|default:"0" }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card h-100 border-0 shadow-sm text-center">
+                    <div class="card-body">
+                        <i class="fas fa-clock fa-2x text-warning mb-2"></i>
+                        <h6 class="text-uppercase text-muted small">Vencidos (hoy)</h6>
+                        <p class="display-5 fw-bold mb-0 serif-heading">{{ prestamos_vencidos|default:"0" }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card h-100 border-0 shadow-sm text-center">
+                    <div class="card-body">
+                        <i class="fas fa-coins fa-2x text-success mb-2"></i>
+                        <h6 class="text-uppercase text-muted small">Multas totales (C$)</h6>
+                        <p class="display-5 fw-bold mb-0 serif-heading">{{ total_multas_monto|default:"0" }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card h-100 border-0 shadow-sm text-center">
+                    <div class="card-body">
+                        <i class="fas fa-chart-line fa-2x text-info mb-2"></i>
+                        <h6 class="text-uppercase text-muted small">Préstamos mes</h6>
+                        <p class="display-5 fw-bold mb-0 serif-heading">{{ prestamos_este_mes|default:"0" }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card h-100 border-0 shadow-sm text-center">
+                    <div class="card-body">
+                        <i class="fas fa-percent fa-2x text-primary mb-2"></i>
+                        <h6 class="text-uppercase text-muted small">Devolución a tiempo</h6>
+                        <p class="display-5 fw-bold mb-0 serif-heading">{{ tasa_devolucion|default:"0" }}%</p>
+                    </div>
+                </div>
+            </div>
+        {% elif user.rol == 'bibliotecario' %}
+            <!-- BIBLIOTECARIO: métricas operativas -->
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm text-center">
+                    <div class="card-body">
+                        <i class="fas fa-hand-holding-heart fa-2x gold-accent mb-2"></i>
+                        <h6 class="text-uppercase text-muted small">Préstamos activos</h6>
+                        <p class="display-5 fw-bold mb-0 serif-heading">{{ prestamos_activos|default:"0" }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm text-center">
+                    <div class="card-body">
+                        <i class="fas fa-clock fa-2x text-warning mb-2"></i>
+                        <h6 class="text-uppercase text-muted small">Vencidos hoy</h6>
+                        <p class="display-5 fw-bold mb-0 serif-heading">{{ prestamos_vencidos|default:"0" }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm text-center">
+                    <div class="card-body">
+                        <i class="fas fa-coins fa-2x text-danger mb-2"></i>
+                        <h6 class="text-uppercase text-muted small">Multas pendientes</h6>
+                        <p class="display-5 fw-bold mb-0 serif-heading">{{ multas_pendientes|default:"0" }}</p>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <!-- USUARIO NORMAL: métricas personales -->
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm text-center">
+                    <div class="card-body">
+                        <i class="fas fa-book-reader fa-2x gold-accent mb-2"></i>
+                        <h6 class="text-uppercase text-muted small">Mis préstamos activos</h6>
+                        <p class="display-5 fw-bold mb-0 serif-heading">{{ mis_prestamos_activos|default:"0" }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm text-center">
+                    <div class="card-body">
+                        <i class="fas fa-clock fa-2x text-warning mb-2"></i>
+                        <h6 class="text-uppercase text-muted small">Próximos a vencer</h6>
+                        <p class="display-5 fw-bold mb-0 serif-heading">{{ mis_prestamos_por_vencer|default:"0" }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm text-center">
+                    <div class="card-body">
+                        <i class="fas fa-coins fa-2x text-danger mb-2"></i>
+                        <h6 class="text-uppercase text-muted small">Mis multas pendientes</h6>
+                        <p class="display-5 fw-bold mb-0 serif-heading">{{ mis_multas_pendientes|default:"0" }}</p>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- SECCIONES ADICIONALES (solo para admin) -->
+    {% if user.rol == 'administrador' %}
+    <div class="row g-4 mt-2">
+        <!-- Libros más prestados (TOP 5) -->
+        <div class="col-lg-6">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-header bg-transparent border-bottom d-flex justify-content-between align-items-center py-3">
+                    <h5 class="mb-0 serif-heading fw-bold"><i class="fas fa-chart-simple gold-accent me-2"></i>Libros más prestados</h5>
+                    <span class="badge bg-bicu-yellow text-dark">Top 5</span>
+                </div>
+                <div class="card-body">
+                    {% if libros_mas_prestados %}
+                        <div class="list-group list-group-flush">
+                            {% for libro in libros_mas_prestados %}
+                            <div class="list-group-item d-flex justify-content-between align-items-center px-0 py-2 border-0 border-bottom">
+                                <div>
+                                    <i class="fas fa-book text-primary me-2"></i>
+                                    <strong>{{ libro.titulo }}</strong><br>
+                                    <small class="text-muted">{{ libro.autor }}</small>
+                                </div>
+                                <span class="badge bg-primary rounded-pill">{{ libro.total_prestamos }} préstamos</span>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-muted text-center py-4">No hay datos suficientes.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Distribución por categorías (gráfico de barras simple) -->
+        <div class="col-lg-6">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-header bg-transparent border-bottom py-3">
+                    <h5 class="mb-0 serif-heading fw-bold"><i class="fas fa-tags gold-accent me-2"></i>Colección por categoría</h5>
+                </div>
+                <div class="card-body">
+                    {% if categorias_conteo %}
+                        {% for cat in categorias_conteo %}
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between mb-1">
+                                <span>{{ cat.nombre }}</span>
+                                <span class="text-muted small">{{ cat.total }} libros</span>
+                            </div>
+                            <div class="progress" style="height: 6px;">
+                                <div class="progress-bar" style="width: '{{ cat.porcentaje }}%'; background-color: #b68b40;" 
+                                     role="progressbar" aria-valuenow="{{ cat.porcentaje }}" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-muted text-center py-4">Categorías no disponibles.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Actividad reciente: últimos préstamos -->
+    <div class="row g-4 mt-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-transparent border-bottom py-3">
+                    <h5 class="mb-0 serif-heading fw-bold"><i class="fas fa-history gold-accent me-2"></i>Préstamos recientes</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Usuario</th>
+                                    <th>Libro</th>
+                                    <th>Fecha préstamo</th>
+                                    <th>Fecha devolución</th>
+                                    <th>Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if prestamos_recientes %}
+                                    {% for prestamo in prestamos_recientes %}
+                                    <tr>
+                                        <td>{{ prestamo.usuario.username }}</td>
+                                        <td>{{ prestamo.ejemplar.libro.titulo }}</td>
+                                        <td>{{ prestamo.fecha_prestamo|date:"d/m/Y" }}</td>
+                                        <td>{{ prestamo.fecha_devolucion|date:"d/m/Y"|default:"—" }}</td>
+                                        <td>
+                                            {% if prestamo.estado == 'activo' %}
+                                                <span class="badge bg-warning text-dark">Activo</span>
+                                            {% elif prestamo.estado == 'vencido' %}
+                                                <span class="badge bg-danger">Vencido</span>
+                                            {% else %}
+                                                <span class="badge bg-success">Devuelto</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                {% else %}
+                                    <tr><td colspan="5" class="text-center text-muted py-4">No hay movimientos recientes.</td></tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+{% else %}
+    <!-- ========== LANDING PAGE PARA VISITANTES (sin cambios, solo estilo refinado) ========== -->
+    <!-- Hero Section -->
+    <div class="hero-section text-white py-5 mb-5" style="background-color: #0a2540;">
+        <div class="container py-4">
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <h1 class="display-4 fw-bold mb-3 serif-heading">
+                        <i class="fas fa-landmark me-3"></i> Biblioteca Central de BICU
+                    </h1>
+                    <p class="lead fs-4 mb-4">"El conocimiento transforma, la lectura libera"</p>
+                    <p class="fs-5">Bienvenido a nuestro sistema de gestión bibliotecaria. Explora nuestro catálogo, solicita préstamos y mantente al día con tus materiales.</p>
+                    <a href="{% url 'login' %}" class="btn btn-outline-gold btn-lg px-5 mt-2">
+                        <i class="fas fa-sign-in-alt me-2"></i> Acceder al sistema
+                    </a>
+                </div>
+                <div class="col-lg-4 text-center d-none d-lg-block">
+                    <i class="fas fa-book-open fa-6x text-white-50"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Estadísticas rápidas públicas -->
+    <div class="row g-4 mb-5">
+        <div class="col-md-3">
+            <div class="stat-card text-center">
+                <i class="fas fa-book fa-2x gold-accent mb-2"></i>
+                <div class="stat-number">{{ total_libros|default:"0" }}</div>
+                <p class="text-muted small text-uppercase mt-1">Libros en catálogo</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card text-center">
+                <i class="fas fa-barcode fa-2x gold-accent mb-2"></i>
+                <div class="stat-number">{{ total_ejemplares|default:"0" }}</div>
+                <p class="text-muted small text-uppercase mt-1">Ejemplares físicos</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card text-center">
+                <i class="fas fa-hand-holding-heart fa-2x gold-accent mb-2"></i>
+                <div class="stat-number">{{ total_prestamos_activos|default:"0" }}</div>
+                <p class="text-muted small text-uppercase mt-1">Préstamos activos</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card text-center">
+                <i class="fas fa-users fa-2x gold-accent mb-2"></i>
+                <div class="stat-number">{{ total_usuarios|default:"0" }}</div>
+                <p class="text-muted small text-uppercase mt-1">Usuarios registrados</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Características -->
+    <div class="row g-4 mb-5">
+        <div class="col-md-4">
+            <div class="feature-card h-100 text-center">
+                <i class="fas fa-search fa-3x gold-accent mb-3"></i>
+                <h5 class="serif-heading">Consulta el catálogo</h5>
+                <p class="text-muted">Explora nuestra colección de miles de títulos en todas las áreas del conocimiento.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="feature-card h-100 text-center">
+                <i class="fas fa-mobile-alt fa-3x gold-accent mb-3"></i>
+                <h5 class="serif-heading">Acceso en línea</h5>
+                <p class="text-muted">Gestiona tus préstamos y renovaciones desde cualquier lugar.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="feature-card h-100 text-center">
+                <i class="fas fa-chalkboard-user fa-3x gold-accent mb-3"></i>
+                <h5 class="serif-heading">Apoyo académico</h5>
+                <p class="text-muted">Contamos con salas de estudio y material de referencia.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sección institucional -->
+    <div class="institutional-section">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h3 class="serif-heading fw-bold"><i class="fas fa-university gold-accent me-2"></i> Universidad BICU</h3>
+                <p>La Biblioteca Central de la Bluefields Indian & Caribbean University (BICU) es un espacio dedicado al fomento de la lectura, la investigación y el aprendizaje. Nuestro compromiso es brindar acceso a la información de calidad a toda la comunidad universitaria y público en general.</p>
+                <p><i class="fas fa-map-marker-alt me-2 text-danger"></i> Recinto Universitario, Bluefields - RACCS</p>
+                <p><i class="fas fa-envelope me-2 text-secondary"></i> biblioteca@bicu.edu.ni</p>
+            </div>
+            <div class="col-md-4 text-center">
+                <img src="{% static 'img/logo_bicu.png' %}" alt="Logo BICU" class="img-fluid rounded-circle shadow" style="max-width: 150px;" onerror="this.src='https://via.placeholder.com/150?text=BICU'">
+            </div>
+        </div>
+    </div>
+{% endif %}
+{% endblock %}

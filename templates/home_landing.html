@@ -1,0 +1,276 @@
+{% extends 'base_landing.html' %}
+{% load static %}
+
+{% block title %}Biblioteca Central BICU | Excelencia Académica{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Tipografía refinada */
+    @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap');
+
+    body {
+        font-family: 'Inter', sans-serif;
+        color: #2c3e4e;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    .serif-heading {
+        font-family: 'Cormorant Garamond', serif;
+        font-weight: 600;
+        letter-spacing: -0.02em;
+    }
+
+    .hero-section {
+        background-color: #0a2540;
+        background-image: radial-gradient(circle at 10% 20%, rgba(255, 215, 140, 0.08) 0%, rgba(10, 37, 64, 0.95) 90%);
+        border-radius: 0 0 2rem 2rem;
+        margin-bottom: 3rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .hero-section::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 1200'%3E%3Cpath fill='%23ffffff' fill-opacity='0.04' d='M0,0 L1200,600 L0,1200 Z'/%3E%3C/svg%3E");
+        pointer-events: none;
+    }
+
+    .btn-outline-gold {
+        border: 1px solid #d4af7a;
+        color: #d4af7a;
+        background: transparent;
+        transition: all 0.25s ease;
+        border-radius: 0;
+        padding: 0.75rem 2rem;
+        font-weight: 500;
+        letter-spacing: 0.5px;
+    }
+
+    .btn-outline-gold:hover {
+        background-color: #d4af7a;
+        color: #0a2540;
+        border-color: #d4af7a;
+    }
+
+    .stat-card {
+        background: white;
+        border: none;
+        border-radius: 1rem;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.02), 0 0 0 1px #eef2f6;
+        transition: transform 0.2s, box-shadow 0.2s;
+        padding: 1.5rem 1rem;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.05), 0 0 0 1px #e0e7ed;
+    }
+
+    .stat-number {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 2.8rem;
+        font-weight: 700;
+        color: #0a2540;
+        line-height: 1.2;
+    }
+
+    .feature-card {
+        background: white;
+        border: none;
+        border-radius: 0.75rem;
+        box-shadow: 0 0 0 1px #f0f2f5;
+        transition: all 0.2s;
+        padding: 1.75rem;
+    }
+
+    .feature-card:hover {
+        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.05), 0 0 0 1px #e2e8f0;
+    }
+
+    .gold-accent {
+        color: #b68b40;
+    }
+
+    .border-gold {
+        border-bottom: 2px solid #b68b40;
+        display: inline-block;
+        padding-bottom: 0.25rem;
+    }
+
+    .institutional-section {
+        background-color: #f9fafb;
+        border-radius: 1.5rem;
+        padding: 3rem;
+        margin-top: 2rem;
+        border: 1px solid #eef2f6;
+    }
+
+    .university-logo {
+        max-width: 140px;
+        filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.05));
+    }
+
+    @media (max-width: 768px) {
+        .hero-section {
+            border-radius: 0 0 1.5rem 1.5rem;
+        }
+
+        .institutional-section {
+            padding: 1.75rem;
+        }
+
+        .stat-number {
+            font-size: 2.2rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section - estilo académico clásico -->
+<div class="hero-section text-white py-5">
+    <div class="container py-4">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-8">
+                <span class="small text-uppercase tracking-wide gold-accent fw-light"
+                    style="letter-spacing: 3px;">Biblioteca Central</span>
+                <h1 class="display-3 fw-bold mt-2 mb-3">"El conocimiento transforma,<br>la lectura libera"</h1>
+                <p class="lead mb-4 text-white-75" style="max-width: 85%; font-weight: 400;">Un repositorio de sabiduría
+                    al servicio de la comunidad universitaria y la sociedad nicaragüense.</p>
+                <a href="{% url 'login' %}" class="btn btn-outline-gold me-3 mt-2 px-5 py-3">Acceder al sistema</a>
+                <a href="#" class="btn btn-link text-white-50 text-decoration-none mt-2">Explorar catálogo abierto →</a>
+            </div>
+            <div class="col-lg-4 text-center d-none d-lg-block">
+                <img src="{% static 'img/logo_bicu.png' %}" alt="Símbolo de conocimiento" class="img-fluid opacity-50"
+                    style="max-width: 180px;">
+                <!-- fallback: ícono sutil -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+
+    <!-- Estadísticas esenciales - limpias y elegantes -->
+    <div class="row g-4 mb-5 pb-2">
+        <div class="col-md-3">
+            <div class="stat-card text-center">
+                <div class="stat-number">{{ total_libros }}</div>
+                <p class="text-uppercase small text-muted mt-2 mb-0 tracking-wide">Obras catalogadas</p>
+                <div class="gold-accent mt-2" style="width: 40px; height: 2px; background: #b68b40; margin: 0 auto;">
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card text-center">
+                <div class="stat-number">{{ total_ejemplares }}</div>
+                <p class="text-uppercase small text-muted mt-2 mb-0 tracking-wide">Ejemplares físicos</p>
+                <div class="gold-accent mt-2" style="width: 40px; height: 2px; background: #b68b40; margin: 0 auto;">
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card text-center">
+                <div class="stat-number">{{ total_prestamos_activos }}</div>
+                <p class="text-uppercase small text-muted mt-2 mb-0 tracking-wide">Préstamos activos</p>
+                <div class="gold-accent mt-2" style="width: 40px; height: 2px; background: #b68b40; margin: 0 auto;">
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card text-center">
+                <div class="stat-number">{{ total_usuarios }}</div>
+                <p class="text-uppercase small text-muted mt-2 mb-0 tracking-wide">Usuarios activos</p>
+                <div class="gold-accent mt-2" style="width: 40px; height: 2px; background: #b68b40; margin: 0 auto;">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Servicios o pilares académicos -->
+    <div class="row g-4 mb-5">
+        <div class="col-md-4">
+            <div class="feature-card h-100">
+                <div class="mb-3 gold-accent">
+                    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
+                        <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
+                    </svg>
+                </div>
+                <h4 class="h5 fw-semibold serif-heading">Colecciones especiales</h4>
+                <p class="text-muted small">Fondo histórico, tesis doctorales y publicaciones de la Costa Caribe. Acceso
+                    controlado para investigación.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="feature-card h-100">
+                <div class="mb-3 gold-accent">
+                    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="1.2">
+                        <path d="M22 12h-4l-3 9-4-18-3 9H2" />
+                    </svg>
+                </div>
+                <h4 class="h5 fw-semibold serif-heading">Apoyo a la investigación</h4>
+                <p class="text-muted small">Asesoría bibliográfica, gestores de referencias y acceso a bases de datos
+                    especializadas.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="feature-card h-100">
+                <div class="mb-3 gold-accent">
+                    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="1.2">
+                        <rect x="2" y="7" width="20" height="14" rx="2" ry="2" />
+                        <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+                    </svg>
+                </div>
+                <h4 class="h5 fw-semibold serif-heading">Salas de estudio</h4>
+                <p class="text-muted small">Ambientes silenciosos, cubículos grupales y espacios para lectura
+                    continuada. Reserva en línea.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sección institucional con carácter universitario -->
+    <div class="institutional-section">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h2 class="display-6 serif-heading fw-bold mb-3">Bluefields Indian & Caribbean University</h2>
+                <div class="border-gold w-25 mb-4"></div>
+                <p class="fs-6 text-secondary">La Biblioteca Central es el corazón intelectual de BICU. Custodiamos más
+                    de <strong>{{ total_libros }} títulos</strong> y ofrecemos un entorno propicio para el
+                    descubrimiento académico. Nuestro compromiso es con la excelencia, la interculturalidad y el acceso
+                    abierto al conocimiento.</p>
+                <div class="mt-4">
+                    <p class="mb-1"><i class="fas fa-map-marker-alt gold-accent me-2"></i> <span class="small">Recinto
+                            Universitario, Bluefields - RACCS, Nicaragua</span></p>
+                    <p class="mb-1"><i class="fas fa-envelope gold-accent me-2"></i> <span
+                            class="small">biblioteca@bicu.edu.ni</span></p>
+                    <p><i class="fas fa-phone-alt gold-accent me-2"></i> <span class="small">+505 2572 2354 ext.
+                            110</span></p>
+                </div>
+                <a href="#" class="btn btn-sm btn-outline-secondary rounded-0 mt-2 px-4">Conozca nuestras
+                    instalaciones</a>
+            </div>
+            <div class="col-md-4 text-center mt-4 mt-md-0">
+                <img src="{% static 'img/logo_bicu.png' %}" alt="Emblema BICU" class="university-logo img-fluid">
+                <p class="text-muted small mt-3 fst-italic">"La Educacion es la mejor opcion para el desarrollo de los
+                    pueblos"</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Espacio adicional para respiro -->
+    <div class="py-4"></div>
+</div>
+{% endblock %}
+```

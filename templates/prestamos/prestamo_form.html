@@ -1,0 +1,212 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Nuevo Préstamo | Biblioteca BICU{% endblock %}
+
+{% block extra_css %}
+<!-- Select2 -->
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" rel="stylesheet" />
+<style>
+    .select2-container--bootstrap-5 .select2-selection {
+        border-radius: 0.75rem !important;
+        border: 1px solid #e2e8f0 !important;
+        min-height: 46px;
+        background: white;
+    }
+    .select2-container--bootstrap-5 .select2-selection--single .select2-selection__rendered {
+        line-height: 44px;
+        padding-left: 1rem;
+        color: #1f2d3d;
+    }
+    .select2-container--bootstrap-5 .select2-selection--single .select2-selection__arrow {
+        height: 44px;
+    }
+    .select2-dropdown {
+        border-radius: 0.75rem !important;
+        border-color: #e2e8f0;
+    }
+    .select2-container--bootstrap-5 .select2-results__option--highlighted {
+        background-color: #b68b40 !important;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-7">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-transparent border-bottom py-3">
+                <h3 class="mb-0 serif-heading fw-bold">
+                    <i class="fas fa-hand-holding-heart gold-accent me-2"></i> Registrar Préstamo
+                </h3>
+                <p class="text-muted small mt-1 mb-0">
+                    <i class="fas fa-info-circle me-1"></i> Seleccione usuario y ejemplar para el préstamo.
+                </p>
+            </div>
+            <div class="card-body p-4">
+                <form method="post" novalidate>
+                    {% csrf_token %}
+
+                    <!-- Campo Usuario con Select2 -->
+                    <div class="mb-3">
+                        <label for="id_usuario" class="form-label fw-semibold small text-uppercase text-muted">
+                            <i class="fas fa-user me-1"></i> Usuario
+                        </label>
+                        <select name="usuario" id="id_usuario" class="form-select user-select2" required>
+                            <option value="">-- Buscar usuario --</option>
+                        </select>
+                        {% if form.usuario.errors %}
+                            <div class="text-danger small mt-1">
+                                {% for error in form.usuario.errors %}
+                                    <i class="fas fa-exclamation-circle me-1"></i>{{ error }}<br>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Campo Ejemplar con Select2 -->
+                    <div class="mb-3">
+                        <label for="id_ejemplar" class="form-label fw-semibold small text-uppercase text-muted">
+                            <i class="fas fa-barcode me-1"></i> Ejemplar
+                        </label>
+                        <select name="ejemplar" id="id_ejemplar" class="form-select ejemplar-select2" required>
+                            <option value="">-- Buscar ejemplar --</option>
+                        </select>
+                        {% if form.ejemplar.errors %}
+                            <div class="text-danger small mt-1">
+                                {% for error in form.ejemplar.errors %}
+                                    <i class="fas fa-exclamation-circle me-1"></i>{{ error }}<br>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Resto de campos del formulario (fechas, etc.) -->
+                    {% for field in form %}
+                        {% if field.name not in 'usuario,ejemplar' %}
+                            <div class="mb-3">
+                                <label for="{{ field.id_for_label }}" class="form-label fw-semibold small text-uppercase text-muted">
+                                    {{ field.label }}
+                                    {% if field.field.required %}<span class="text-danger">*</span>{% endif %}
+                                </label>
+                                {{ field }}
+                                {% if field.help_text %}
+                                    <div class="form-text text-muted small mt-1">{{ field.help_text }}</div>
+                                {% endif %}
+                                {% if field.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in field.errors %}
+                                            <i class="fas fa-exclamation-circle me-1"></i>{{ error }}<br>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+
+                    <div class="d-flex gap-2 mt-4">
+                        <button type="submit" class="btn btn-primary rounded-pill px-4 shadow-sm">
+                            <i class="fas fa-save me-2"></i> Registrar
+                        </button>
+                        <a href="{% url 'prestamos:list' %}" class="btn btn-outline-secondary rounded-pill px-4">
+                            <i class="fas fa-times me-2"></i> Cancelar
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script>
+    $(document).ready(function() {
+        // Select2 para Usuario
+        $('#id_usuario').select2({
+            theme: 'bootstrap-5',
+            placeholder: 'Escribe nombre, email o ID',
+            allowClear: true,
+            ajax: {
+                url: '{% url "prestamos:buscar_usuarios" %}',
+                dataType: 'json',
+                delay: 300,
+                data: function(params) {
+                    return {
+                        term: params.term || '',
+                        page: params.page || 1
+                    };
+                },
+                processResults: function(data, params) {
+                    return {
+                        results: data.results.map(function(user) {
+                            return {
+                                id: user.id,
+                                text: user.username,
+                                username: user.username,
+                                email: user.email,
+                                rol: user.rol
+                            };
+                        }),
+                        pagination: { more: data.more }
+                    };
+                },
+                cache: true
+            },
+            templateResult: function(user) {
+                if (user.loading) return user.text;
+                return $(`<div><strong>${user.username}</strong><br><small>${user.email} - ${user.rol}</small></div>`);
+            },
+            templateSelection: function(user) {
+                return user.username || user.text;
+            }
+        });
+
+        // Select2 para Ejemplar
+        $('#id_ejemplar').select2({
+            theme: 'bootstrap-5',
+            placeholder: 'Buscar por código o título del libro',
+            allowClear: true,
+            ajax: {
+                url: '{% url "prestamos:buscar_ejemplares" %}',
+                dataType: 'json',
+                delay: 300,
+                data: function(params) {
+                    return {
+                        term: params.term || '',
+                        page: params.page || 1
+                    };
+                },
+                processResults: function(data, params) {
+                    return {
+                        results: data.results.map(function(ej) {
+                            return {
+                                id: ej.id,
+                                text: `${ej.codigo_barras} - ${ej.libro_titulo}`,
+                                codigo: ej.codigo_barras,
+                                libro: ej.libro_titulo,
+                                estado: ej.estado
+                            };
+                        }),
+                        pagination: { more: data.more }
+                    };
+                },
+                cache: true
+            },
+            templateResult: function(ej) {
+                if (ej.loading) return ej.text;
+                var badge = ej.estado === 'disponible' ? 
+                    '<span class="badge bg-success ms-2">Disponible</span>' : 
+                    '<span class="badge bg-danger ms-2">Ocupado</span>';
+                return $(`<div class="d-flex justify-content-between align-items-center"><div><code>${ej.codigo}</code><br><small>${ej.libro}</small></div>${badge}</div>`);
+            },
+            templateSelection: function(ej) {
+                return ej.codigo ? `${ej.codigo} - ${ej.libro}` : ej.text;
+            }
+        });
+    });
+</script>
+{% endblock %}

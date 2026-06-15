@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Eliminar Ejemplar | Biblioteca BICU{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-transparent border-bottom py-3">
+                <h3 class="mb-0 serif-heading fw-bold">
+                    <i class="fas fa-exclamation-triangle gold-accent me-2"></i> Confirmar eliminación
+                </h3>
+            </div>
+            <div class="card-body p-4 text-center">
+                <i class="fas fa-barcode fa-4x gold-accent mb-3"></i>
+                <p class="fs-5">¿Estás seguro de eliminar el ejemplar <strong class="text-danger">{{ object.codigo_barras }}</strong>?</p>
+                <p class="text-muted small">Esta acción no se puede deshacer.</p>
+                <form method="post" class="confirm-delete mt-3">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger rounded-pill px-4 me-2">
+                        <i class="fas fa-check-circle me-2"></i> Sí, eliminar
+                    </button>
+                    <a href="{% url 'libros:ejemplar_list' %}" class="btn btn-outline-secondary rounded-pill px-4">
+                        <i class="fas fa-ban me-2"></i> Cancelar
+                    </a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
