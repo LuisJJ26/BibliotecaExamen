@@ -7,11 +7,18 @@ python manage.py collectstatic --noinput
 python manage.py migrate
 
 python manage.py shell -c "
-from usuarios.models import Usuario;
-if not Usuario.objects.filter(username='admin').exists():
-    Usuario.objects.create_superuser(
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
+
+if not User.objects.filter(username='admin').exists():
+    User.objects.create_superuser(
         username='admin',
-        email='admin@example.com',
-        password='TuPasswordSegura123'
+        email='admin@biblioteca.com',
+        password='Admin123456',
+        nombre='Administrador'
     )
+    print('Superusuario creado')
+else:
+    print('Superusuario ya existe')
 "
