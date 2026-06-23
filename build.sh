@@ -8,6 +8,7 @@ python manage.py migrate
 
 python manage.py shell -c "
 from django.contrib.auth import get_user_model
+from biblioteca.models import Libro  # Cambia 'biblioteca' por el nombre de tu app y 'Libro' por el nombre de tu modelo
 
 User = get_user_model()
 
@@ -21,4 +22,34 @@ if not User.objects.filter(username='admin').exists():
     print('Superusuario creado')
 else:
     print('Superusuario ya existe')
+
+# Crear 20 libros si no existen
+if Libro.objects.count() == 0:
+    libros = [
+        {'titulo': 'Cien años de soledad', 'autor': 'Gabriel García Márquez', 'isbn': '978-84-376-0494-7', 'genero': 'Novela', 'año_publicacion': 1967},
+        {'titulo': 'El amor en los tiempos del cólera', 'autor': 'Gabriel García Márquez', 'isbn': '978-84-376-0495-4', 'genero': 'Novela', 'año_publicacion': 1985},
+        {'titulo': 'Don Quijote de la Mancha', 'autor': 'Miguel de Cervantes', 'isbn': '978-84-206-4450-9', 'genero': 'Novela', 'año_publicacion': 1605},
+        {'titulo': 'La casa de los espíritus', 'autor': 'Isabel Allende', 'isbn': '978-84-322-0300-0', 'genero': 'Novela', 'año_publicacion': 1982},
+        {'titulo': 'Rayuela', 'autor': 'Julio Cortázar', 'isbn': '978-84-322-0801-2', 'genero': 'Novela', 'año_publicacion': 1963},
+        {'titulo': 'El principio del placer', 'autor': 'José Emilio Pacheco', 'isbn': '978-84-322-0999-6', 'genero': 'Cuento', 'año_publicacion': 1972},
+        {'titulo': 'La sombra del viento', 'autor': 'Carlos Ruiz Zafón', 'isbn': '978-84-204-5750-5', 'genero': 'Novela', 'año_publicacion': 2001},
+        {'titulo': 'El juego del ángel', 'autor': 'Carlos Ruiz Zafón', 'isbn': '978-84-204-6963-8', 'genero': 'Novela', 'año_publicacion': 2008},
+        {'titulo': 'El prisionero del cielo', 'autor': 'Carlos Ruiz Zafón', 'isbn': '978-84-204-0699-8', 'genero': 'Novela', 'año_publicacion': 2011},
+        {'titulo': 'El laberinto de los espíritus', 'autor': 'Carlos Ruiz Zafón', 'isbn': '978-84-204-2660-8', 'genero': 'Novela', 'año_publicacion': 2016},
+        {'titulo': 'Crónica de una muerte anunciada', 'autor': 'Gabriel García Márquez', 'isbn': '978-84-376-0496-1', 'genero': 'Novela', 'año_publicacion': 1981},
+        {'titulo': 'El coronel no tiene quien le escriba', 'autor': 'Gabriel García Márquez', 'isbn': '978-84-376-0497-8', 'genero': 'Novela', 'año_publicacion': 1961},
+        {'titulo': 'La tregua', 'autor': 'Mario Benedetti', 'isbn': '978-84-322-0301-7', 'genero': 'Novela', 'año_publicacion': 1960},
+        {'titulo': 'El túnel', 'autor': 'Ernesto Sabato', 'isbn': '978-84-322-0302-4', 'genero': 'Novela', 'año_publicacion': 1948},
+        {'titulo': 'Sobre héroes y tumbas', 'autor': 'Ernesto Sabato', 'isbn': '978-84-322-0303-1', 'genero': 'Novela', 'año_publicacion': 1961},
+        {'titulo': 'Abaddón el exterminador', 'autor': 'Ernesto Sabato', 'isbn': '978-84-322-0304-8', 'genero': 'Novela', 'año_publicacion': 1974},
+        {'titulo': 'El Aleph', 'autor': 'Jorge Luis Borges', 'isbn': '978-84-322-0305-5', 'genero': 'Cuento', 'año_publicacion': 1949},
+        {'titulo': 'Ficciones', 'autor': 'Jorge Luis Borges', 'isbn': '978-84-322-0306-2', 'genero': 'Cuento', 'año_publicacion': 1944},
+        {'titulo': 'El libro de arena', 'autor': 'Jorge Luis Borges', 'isbn': '978-84-322-0307-9', 'genero': 'Cuento', 'año_publicacion': 1975},
+        {'titulo': 'La invención de Morel', 'autor': 'Adolfo Bioy Casares', 'isbn': '978-84-322-0308-6', 'genero': 'Novela', 'año_publicacion': 1940},
+    ]
+    for libro_data in libros:
+        Libro.objects.create(**libro_data)
+    print('20 libros creados')
+else:
+    print('Los libros ya existen')
 "
