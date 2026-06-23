@@ -8,7 +8,7 @@ python manage.py migrate
 
 python manage.py shell -c "
 from django.contrib.auth import get_user_model
-from biblioteca.models import Libro  # Cambia 'biblioteca' por el nombre de tu app y 'Libro' por el nombre de tu modelo
+from apps.libros.models import Libro
 
 User = get_user_model()
 
